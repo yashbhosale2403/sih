@@ -1,0 +1,1773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureDocs | SIH26190 Secure Document System</title>
+    <!-- Google Fonts & FontAwesome -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        :root {
+            --bg: #F8FAFC;
+            --surface: #FFFFFF;
+            --surface-hover: #F1F5F9;
+            --border: #E2E8F0;
+            --primary: #2563EB;
+            --primary-hover: #1D4ED8;
+            --text-main: #0F172A;
+            --text-muted: #64748B;
+            --danger: #EF4444;
+            --warning: #F59E0B;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Top Notification Bar */
+        .top-notice {
+            background-color: #FEF3C7;
+            color: #92400E;
+            font-weight: 600;
+            text-align: center;
+            padding: 0.4rem 1rem;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        /* Demo Mode Banner */
+        .demo-panel-banner {
+            background: #1E293B;
+            color: #F8FAFC;
+            padding: 0.5rem 2.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+        }
+
+        /* Header */
+        .header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 1.1rem 2.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+        }
+        .brand-icon {
+            width: 38px;
+            height: 38px;
+            background: #EFF6FF;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 1.25rem;
+        }
+        .brand-title {
+            font-size: 1.35rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            color: var(--text-main);
+        }
+
+        .nav-back-btn {
+            background: #F1F5F9;
+            border: 1px solid #CBD5E1;
+            color: var(--text-main);
+            padding: 0.45rem 0.9rem;
+            border-radius: 9999px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .nav-back-btn:hover {
+            background: #DBEAFE;
+            border-color: #93C5FD;
+            color: var(--primary);
+            transform: translateX(-2px);
+        }
+
+        .clickable-case-row {
+            transition: background 0.15s ease;
+        }
+        .clickable-case-row:hover {
+            background-color: #F8FAFC !important;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 0.4rem;
+        }
+        .nav-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .nav-btn:hover {
+            color: var(--text-main);
+            background: var(--surface-hover);
+        }
+        .nav-btn.active {
+            color: var(--primary);
+            background: #EFF6FF;
+        }
+
+        .user-pill {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: #F1F5F9;
+            padding: 0.35rem 0.85rem;
+            border-radius: 9999px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        .badge-pill {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--primary);
+            background: #DBEAFE;
+            padding: 0.15rem 0.45rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+        }
+
+        .container {
+            max-width: 1140px;
+            margin: 3rem auto;
+            padding: 0 1.5rem;
+            flex: 1;
+            width: 100%;
+        }
+
+        /* Ultra-Clean Hero Section */
+        .hero-clean {
+            text-align: center;
+            margin-bottom: 3.5rem;
+        }
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #DCFCE7;
+            color: #15803D;
+            font-weight: 600;
+            font-size: 0.85rem;
+            padding: 0.35rem 0.95rem;
+            border-radius: 9999px;
+            margin-bottom: 1.5rem;
+        }
+        .hero-badge-dot {
+            width: 7px; height: 7px; background: #16A34A; border-radius: 50%;
+        }
+        .hero-title-clean {
+            font-size: 3.6rem;
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: -0.04em;
+            color: var(--text-main);
+            margin-bottom: 1.25rem;
+        }
+        .hero-desc-clean {
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+            max-width: 640px;
+            margin: 0 auto 2.25rem auto;
+            font-weight: 400;
+        }
+
+        /* Minimal Pill Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.75rem;
+            border-radius: 9999px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+        .btn-sm { padding: 0.4rem 1rem; font-size: 0.825rem; }
+        .btn-primary {
+            background-color: var(--primary);
+            color: #FFFFFF;
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25);
+        }
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+        .btn-secondary {
+            background-color: #FFFFFF;
+            color: var(--text-main);
+            border-color: var(--border);
+        }
+        .btn-secondary:hover {
+            background-color: var(--surface-hover);
+        }
+        .btn-dark {
+            background-color: #0F172A;
+            color: #FFFFFF;
+        }
+        .btn-dark:hover {
+            background-color: #1E293B;
+        }
+        .btn-danger {
+            background-color: #FEE2E2;
+            color: #DC2626;
+        }
+
+        /* Ultra-Clean Role Cards */
+        .role-grid-clean {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.25rem;
+        }
+        .role-card-clean {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 1.75rem 1.5rem;
+            text-align: center;
+            transition: all 0.25s ease;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+        }
+        .role-card-clean:hover {
+            border-color: var(--primary);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(37, 99, 235, 0.08);
+        }
+        .role-icon-clean {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            background: #EFF6FF;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            margin: 0 auto 1rem auto;
+        }
+        .role-name-clean {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-bottom: 0.4rem;
+            letter-spacing: -0.02em;
+        }
+        .role-desc-clean {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin-bottom: 1.25rem;
+        }
+
+        /* Minimal Cards & Tables */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.03);
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.925rem;
+        }
+        th, td {
+            padding: 1rem 1.1rem;
+            text-align: left;
+            border-bottom: 1px solid #F1F5F9;
+        }
+        th {
+            color: var(--text-muted);
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+        }
+        tr:hover td {
+            background: #F8FAFC;
+        }
+
+        .mono {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+        }
+
+        .badge-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-weight: 700;
+            font-size: 0.75rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+        .badge-verified { background: #DCFCE7; color: #15803D; }
+        .badge-tampered { background: #FEE2E2; color: #DC2626; }
+        .badge-warning { background: #FEF3C7; color: #D97706; }
+        .badge-info { background: #E0F2FE; color: #0369A1; }
+        .badge-secondary { background: #F1F5F9; color: #475569; }
+
+        /* Minimal Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 2.25rem;
+            margin-top: 1.5rem;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0.85rem;
+            top: 0; bottom: 0;
+            width: 2px;
+            background: #E2E8F0;
+        }
+        .timeline-node {
+            position: relative;
+            margin-bottom: 1.25rem;
+        }
+        .timeline-icon {
+            position: absolute;
+            left: -2.25rem;
+            top: 0;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #FFFFFF;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            transition: all 0.2s ease;
+        }
+        .timeline-icon.icon-upload { border-color: #10B981; color: #10B981; background: #ECFDF5; }
+        .timeline-icon.icon-download { border-color: #3B82F6; color: #3B82F6; background: #EFF6FF; }
+        .timeline-icon.icon-redact { border-color: #8B5CF6; color: #8B5CF6; background: #F5F3FF; }
+        .timeline-icon.icon-default { border-color: #64748B; color: #64748B; background: #F8FAFC; }
+
+        .timeline-content {
+            background: #FFFFFF;
+            border: 1px solid #E2E8F0;
+            border-radius: 14px;
+            padding: 1.1rem 1.3rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+            transition: all 0.2s ease;
+        }
+        .timeline-content:hover {
+            border-color: #CBD5E1;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+        }
+
+        /* Modal Overlay */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(6px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal {
+            background: #FFFFFF;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 460px;
+            padding: 2.25rem;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+        }
+        .form-group { margin-bottom: 1.2rem; }
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 700;
+            margin-bottom: 0.4rem;
+            color: var(--text-main);
+        }
+        .form-input, .form-select {
+            width: 100%;
+            background: #F8FAFC;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 0.75rem 0.95rem;
+            color: var(--text-main);
+            font-size: 0.925rem;
+            font-family: inherit;
+        }
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: #FFFFFF;
+        }
+
+        .footer {
+            border-top: 1px solid var(--border);
+            padding: 1.75rem;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            background: var(--surface);
+            margin-top: auto;
+        }
+    </style>
+</head>
+<body x-data="securedocsApp()" x-init="initApp()">
+
+    <!-- Top Offline Banner -->
+    <div class="top-notice" x-show="!isOnline || pendingSyncCount > 0">
+        <i class="fa-solid fa-wifi"></i>
+        <span>Offline Mode Active — <span x-text="pendingSyncCount"></span> action(s) queued for sync.</span>
+        <button class="btn btn-sm btn-secondary" @click="syncNow()" style="margin-left:1rem;">Sync Now</button>
+    </div>
+
+    <!-- Judge Demo Mode Panel -->
+    <div class="demo-panel-banner" x-show="currentUser && (currentUser.role === 'ADMIN' || currentUser.is_superuser)">
+        <div style="display:flex; align-items:center; gap:0.6rem;">
+            <i class="fa-solid fa-gavel"></i>
+            <strong>Judge Demo Mode Panel</strong>
+            <span style="color:#CBD5E1;">| Test Merkle chain break detection live by simulating file corruption on disk.</span>
+        </div>
+        <div style="display:flex; gap:0.6rem;">
+            <button class="btn btn-sm btn-danger" @click="simulateTamperPrompt()">
+                <i class="fa-solid fa-skull-crossbones"></i> Simulate Tamper
+            </button>
+            <button class="btn btn-sm btn-secondary" @click="restoreTamperPrompt()" style="background:#FFFFFF; color:#0F172A;">
+                <i class="fa-solid fa-rotate-left"></i> Reset Audit Chain
+            </button>
+        </div>
+    </div>
+
+    <!-- Minimal Header -->
+    <header class="header">
+        <div style="display:flex; align-items:center; gap:0.85rem;">
+            <button class="nav-back-btn" x-show="currentUser && !showRoleSelection" @click="handleGlobalBack()" title="Back to previous page/view">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span>Back</span>
+            </button>
+
+            <div class="brand" @click="showRoleSelection = true">
+                <div class="brand-icon"><i class="fa-solid fa-shield-halved"></i></div>
+                <div class="brand-title">SecureDocs</div>
+            </div>
+        </div>
+
+        <div class="nav-tabs" x-show="currentUser">
+            <template x-if="currentUser.role === 'INVESTIGATING_OFFICER'">
+                <div style="display:flex; gap:0.3rem;">
+                    <button class="nav-btn" :class="{ 'active': activeTab === 'cases' }" @click="activeTab = 'cases'">
+                        My Assigned Cases
+                    </button>
+                </div>
+            </template>
+
+            <template x-if="currentUser.role === 'LEGAL_REVIEWER'">
+                <div style="display:flex; gap:0.3rem;">
+                    <button class="nav-btn" :class="{ 'active': activeTab === 'cases' }" @click="activeTab = 'cases'">
+                        Case Review
+                    </button>
+                </div>
+            </template>
+
+            <template x-if="currentUser.role === 'ADMIN' || currentUser.is_superuser">
+                <div style="display:flex; gap:0.3rem;">
+                    <button class="nav-btn" :class="{ 'active': activeTab === 'alerts' }" @click="activeTab = 'alerts'; loadAlerts()">
+                        SOC Alerts Dashboard
+                    </button>
+                    <button class="nav-btn" :class="{ 'active': activeTab === 'cases' }" @click="activeTab = 'cases'">
+                        All Cases
+                    </button>
+                </div>
+            </template>
+        </div>
+
+        <div>
+            <template x-if="currentUser">
+                <div class="user-pill">
+                    <i class="fa-solid fa-circle-user" style="color:var(--primary); font-size:1.1rem;"></i>
+                    <span x-text="currentUser.username"></span>
+                    <span class="badge-pill" x-text="currentUser.badge_id"></span>
+                    <button class="btn btn-sm btn-secondary" @click="logout()" style="margin-left:0.4rem; border:none;"><i class="fa-solid fa-arrow-right-from-bracket"></i></button>
+                </div>
+            </template>
+            <template x-if="!currentUser">
+                <button class="btn btn-dark" @click="showRoleSelection = true">Select Role to Sign In</button>
+            </template>
+        </div>
+    </header>
+
+    <main class="container">
+
+        <!-- ULTRA-CLEAN LANDING PAGE -->
+        <div x-show="!currentUser || showRoleSelection">
+            <section class="hero-clean">
+                <div class="hero-badge">
+                    <div class="hero-badge-dot"></div>
+                    SIH26190 Prototype · Blockchain Evidence System
+                </div>
+                <h1 class="hero-title-clean">
+                    Secure Legal & Forensic Documents.
+                </h1>
+                <p class="hero-desc-clean">
+                    Tamper-proof chain-of-custody ledger, AES-256 encryption, and instant court PDF audit reports for Police, Courts, and Forensic Units.
+                </p>
+
+                <div style="display:flex; gap:1rem; justify-content:center; align-items:center;">
+                    <button class="btn btn-primary" @click="selectRoleLogin('officer_sharma', 'OfficerPass123!', 'BADGE-POLICE-101', 'INVESTIGATING_OFFICER', 'Investigating Officer')">
+                        Enter System <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                    <button class="btn btn-secondary" @click="selectRoleLogin('reviewer_mehta', 'ReviewerPass123!', 'BADGE-LEGAL-202', 'LEGAL_REVIEWER', 'Court Judge / Legal Reviewer')">
+                        Watch Judge Demo
+                    </button>
+                </div>
+            </section>
+
+            <!-- Ultra-Clean Role Cards -->
+            <div class="role-grid-clean">
+                <!-- 1. Police Officer -->
+                <div class="role-card-clean" @click="selectRoleLogin('officer_sharma', 'OfficerPass123!', 'BADGE-POLICE-101', 'INVESTIGATING_OFFICER', 'Investigating Officer')">
+                    <div class="role-icon-clean"><i class="fa-solid fa-user-ninja"></i></div>
+                    <div class="role-name-clean">Police Officer</div>
+                    <div class="role-desc-clean">Upload FIRs, attach forensic evidence, and manage active police cases.</div>
+                    <button class="btn btn-primary btn-sm" style="width:100%; justify-content:center;">
+                        Sign In as Officer
+                    </button>
+                </div>
+
+                <!-- 2. Forensic Specialist -->
+                <div class="role-card-clean" @click="selectRoleLogin('officer_sharma', 'OfficerPass123!', 'BADGE-POLICE-101', 'INVESTIGATING_OFFICER', 'Forensic Specialist')">
+                    <div class="role-icon-clean" style="background:#FCE7F3; color:#DB2777;"><i class="fa-solid fa-microscope"></i></div>
+                    <div class="role-name-clean">Forensic Specialist</div>
+                    <div class="role-desc-clean">Inspect encrypted document vaults, decrypt files, and redact witness statements.</div>
+                    <button class="btn btn-secondary btn-sm" style="width:100%; justify-content:center;">
+                        Sign In as Specialist
+                    </button>
+                </div>
+
+                <!-- 3. Court Judge -->
+                <div class="role-card-clean" @click="selectRoleLogin('reviewer_mehta', 'ReviewerPass123!', 'BADGE-LEGAL-202', 'LEGAL_REVIEWER', 'Court Judge / Legal Reviewer')">
+                    <div class="role-icon-clean" style="background:#EEF2FF; color:#4F46E5;"><i class="fa-solid fa-gavel"></i></div>
+                    <div class="role-name-clean">Court Judge</div>
+                    <div class="role-desc-clean">Inspect Merkle chain integrity, review timelines, and export court PDF reports.</div>
+                    <button class="btn btn-secondary btn-sm" style="width:100%; justify-content:center;">
+                        Sign In as Judge
+                    </button>
+                </div>
+
+                <!-- 4. SOC Analyst -->
+                <div class="role-card-clean" @click="selectRoleLogin('test_admin', 'AdminPassword123!', 'BADGE-ADMIN-001', 'ADMIN', 'SOC Security Analyst (Admin)')">
+                    <div class="role-icon-clean" style="background:#FEF3C7; color:#D97706;"><i class="fa-solid fa-shield-cat"></i></div>
+                    <div class="role-name-clean">SOC Analyst</div>
+                    <div class="role-desc-clean">Monitor anomaly alerts, unlock accounts, and run Judge Demo tamper tests.</div>
+                    <button class="btn btn-dark btn-sm" style="width:100%; justify-content:center;">
+                        Sign In as Analyst
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- DASHBOARD FOR LOGGED-IN USERS -->
+        <div x-show="currentUser && !showRoleSelection">
+
+            <!-- Welcome Header -->
+            <div class="card" style="margin-bottom:2rem;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:0.5rem;">
+                            <span class="badge-status badge-verified" x-text="roleTitle"></span>
+                            <span style="color:var(--text-muted); font-size:0.875rem;">Badge ID: <strong x-text="currentUser ? currentUser.badge_id : ''"></strong></span>
+                        </div>
+                        <h2 style="font-size:1.6rem; font-weight:800; letter-spacing:-0.03em;" x-text="'Welcome back, ' + (currentUser ? currentUser.username : 'User')"></h2>
+                        <p style="color:var(--text-muted); font-size:0.95rem; margin-top:0.2rem;" x-text="roleWelcomeMessage"></p>
+                    </div>
+                    <div>
+                        <button class="btn btn-secondary" @click="showRoleSelection = true"><i class="fa-solid fa-arrows-rotate"></i> Switch Workspace</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 1. CASES TAB -->
+            <div x-show="activeTab === 'cases'">
+                <div class="card">
+                    <div class="card-header" style="flex-wrap: wrap; gap: 1rem; align-items: center;">
+                        <div class="card-title">
+                            <i class="fa-solid fa-folder-open" style="color:var(--primary);"></i> Active Case Assignments
+                        </div>
+                        <div style="display:flex; gap:0.6rem; align-items:center; margin-left:auto;">
+                            <div style="position:relative;">
+                                <i class="fa-solid fa-magnifying-glass" style="position:absolute; left:0.75rem; top:50%; transform:translateY(-50%); color:var(--text-muted); font-size:0.85rem;"></i>
+                                <input type="text" class="form-input" placeholder="Search by Case No / Title..." x-model="caseSearchQuery" style="padding-left:2.2rem; width:240px; height:38px; font-size:0.875rem;">
+                            </div>
+                            <button class="btn btn-primary" @click="showCreateCaseModal = true" x-show="currentUser && (currentUser.role === 'INVESTIGATING_OFFICER' || currentUser.role === 'ADMIN' || currentUser.is_superuser)">
+                                <i class="fa-solid fa-plus"></i> Create New Case
+                            </button>
+                        </div>
+                    </div>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Case Number</th>
+                                <th>Case Title</th>
+                                <th>Status</th>
+                                <th>Documents</th>
+                                <th>Created By</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template x-for="c in filteredCases" :key="c.id">
+                                <tr class="clickable-case-row" style="cursor:pointer;" @click="openCaseModal(c)" title="Click row to open case files window">
+                                    <td class="mono" style="font-weight:800; color:var(--primary);" x-text="c.case_number"></td>
+                                    <td style="font-weight:600; color:var(--text-main);" x-text="c.title"></td>
+                                    <td>
+                                        <span class="badge-status" :class="c.status === 'OPEN' ? 'badge-verified' : 'badge-tampered'" x-text="c.status"></span>
+                                    </td>
+                                    <td>
+                                        <span class="mono" style="font-weight:700; font-size:0.825rem; background:#EFF6FF; color:var(--primary); padding:0.2rem 0.55rem; border-radius:6px; display:inline-flex; align-items:center; gap:0.35rem;">
+                                            <i class="fa-solid fa-file-lines"></i>
+                                            <span x-text="(c.document_count || 0) + (c.document_count === 1 ? ' Doc' : ' Docs')"></span>
+                                        </span>
+                                    </td>
+                                    <td style="color:var(--text-muted);" x-text="c.created_by_detail ? c.created_by_detail.username : 'Admin'"></td>
+                                    <td @click.stop>
+                                        <div style="display:flex; gap:0.4rem; align-items:center;">
+                                            <button class="btn btn-sm btn-secondary" @click.stop="selectCase(c)">
+                                                <i class="fa-solid fa-shield-halved"></i> Audit
+                                            </button>
+                                            <template x-if="currentUser && (currentUser.role === 'LEGAL_REVIEWER' || currentUser.role === 'ADMIN' || currentUser.is_superuser)">
+                                                <div style="display:inline-flex; gap:0.3rem;">
+                                                    <button class="btn btn-sm btn-danger" @click.stop="closeCase(c.id)" x-show="c.status === 'OPEN'">
+                                                        <i class="fa-solid fa-lock"></i> Close Case
+                                                    </button>
+                                                    <button class="btn btn-sm btn-secondary" @click.stop="reopenCase(c.id)" x-show="c.status === 'CLOSED'" style="color:var(--primary); border-color:var(--primary);">
+                                                        <i class="fa-solid fa-lock-open"></i> Reopen
+                                                    </button>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </template>
+                            <tr x-show="filteredCases.length === 0">
+                                <td colspan="6" style="text-align:center; padding:2rem; color:var(--text-muted);">
+                                    <i class="fa-solid fa-magnifying-glass" style="font-size:1.5rem; margin-bottom:0.5rem; display:block; opacity:0.5;"></i>
+                                    No cases found matching "<span x-text="caseSearchQuery"></span>"
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+
+
+            <!-- 3. AUDIT TIMELINE TAB -->
+            <div x-show="activeTab === 'audit'">
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title" style="display:flex; align-items:center; gap:0.75rem;">
+                                <button class="btn btn-sm btn-secondary" @click="activeTab = 'cases'">
+                                    <i class="fa-solid fa-arrow-left"></i> Back to Cases
+                                </button>
+                                <span>
+                                    <i class="fa-solid fa-shield-halved" style="color:var(--primary);"></i> Chain of Custody Audit
+                                    <template x-if="selectedCaseObj">
+                                        <span style="color:var(--text-muted); font-size:0.95rem; font-weight:600;" x-text="' — ' + selectedCaseObj.case_number"></span>
+                                    </template>
+                                </span>
+                            </div>
+                            <div style="color:var(--text-muted); font-size:0.875rem; margin-top:0.35rem; display:flex; align-items:center; gap:0.75rem;">
+                                <span>Merkle Chain Integrity:</span>
+                                <template x-if="auditData.verification">
+                                    <span class="badge-status" :class="auditData.verification.verified ? 'badge-verified' : 'badge-tampered'">
+                                        <i class="fa-solid" :class="auditData.verification.verified ? 'fa-check-circle' : 'fa-exclamation-triangle'"></i>
+                                        <span x-text="auditData.verification.verified ? 'Verified Intact' : 'Tamper Detected'"></span>
+                                    </span>
+                                </template>
+                                <template x-if="auditData.verification && !auditData.verification.verified">
+                                    <button class="btn btn-sm btn-primary" @click="restoreTamperPrompt()" x-show="currentUser && (currentUser.role === 'ADMIN' || currentUser.is_superuser)">
+                                        Reset Tamper & Restore Chain
+                                    </button>
+                                </template>
+                            </div>
+                        </div>
+                        <button class="btn btn-secondary" @click="exportPdfReport()" x-show="currentUser && (currentUser.role === 'LEGAL_REVIEWER' || currentUser.role === 'ADMIN' || currentUser.is_superuser)">
+                            <i class="fa-solid fa-file-pdf" style="color:#DC2626;"></i> Export PDF Report
+                        </button>
+                    </div>
+
+                    <div class="timeline">
+                        <template x-for="entry in auditData.timeline" :key="entry.id">
+                            <div class="timeline-node">
+                                <div class="timeline-icon" :class="getTimelineIconClass(entry.action)">
+                                    <i class="fa-solid" :class="getActionIcon(entry.action)"></i>
+                                </div>
+                                <div class="timeline-content">
+                                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+                                        <div style="display:flex; align-items:center; gap:0.6rem;">
+                                            <span class="badge-status" :class="getActionBadgeClass(entry.action)" x-text="entry.action"></span>
+                                            <span style="font-size:0.85rem; color:var(--text-muted);">
+                                                Actor: <strong style="color:var(--text-main);" x-text="entry.actor_detail ? entry.actor_detail.badge_id : 'OFFICER'"></strong>
+                                            </span>
+                                        </div>
+                                        <span class="mono" style="color:var(--text-muted); font-size:0.8rem;" x-text="formatTimestamp(entry.server_timestamp)"></span>
+                                    </div>
+                                    <!-- Single Box for Whole Block Info -->
+                                    <div style="background:#F8FAFC; border:1px solid var(--border); border-radius:12px; padding:0.85rem 1.1rem; display:flex; flex-direction:column; gap:0.5rem; font-size:0.825rem;">
+                                        <!-- 1. Previous Block Hash -->
+                                        <div style="display:flex; align-items:center; justify-content:space-between;">
+                                            <div style="display:flex; align-items:center; gap:0.5rem; overflow:hidden;">
+                                                <span style="color:var(--text-muted); font-weight:600; min-width:140px; white-space:nowrap;">Prev Block Hash:</span>
+                                                <span class="mono" style="color:#64748B; font-weight:600; text-overflow:ellipsis; overflow:hidden; white-space:nowrap;" x-text="entry.prev_entry_hash ? shortHash(entry.prev_entry_hash) : 'GENESIS BLOCK'" :title="entry.prev_entry_hash || 'Genesis Block (Initial)'"></span>
+                                            </div>
+                                            <button class="btn btn-sm btn-secondary" style="padding:0.15rem 0.5rem; font-size:0.75rem; white-space:nowrap;" @click="copyToClipboard(entry.prev_entry_hash || '0000000000000000000000000000000000000000000000000000000000000000')">
+                                                <i class="fa-regular fa-copy"></i> Copy
+                                            </button>
+                                        </div>
+
+                                        <!-- Divider Line -->
+                                        <div style="border-top:1px dashed #CBD5E1;"></div>
+
+                                        <!-- 2. Current Block Hash -->
+                                        <div style="display:flex; align-items:center; justify-content:space-between;">
+                                            <div style="display:flex; align-items:center; gap:0.5rem; overflow:hidden;">
+                                                <span style="color:var(--text-muted); font-weight:600; min-width:140px; white-space:nowrap;">Current Block Hash:</span>
+                                                <span class="mono" style="color:var(--primary); font-weight:700; text-overflow:ellipsis; overflow:hidden; white-space:nowrap;" x-text="shortHash(entry.entry_hash)" :title="entry.entry_hash"></span>
+                                            </div>
+                                            <button class="btn btn-sm btn-secondary" style="padding:0.15rem 0.5rem; font-size:0.75rem; white-space:nowrap;" @click="copyToClipboard(entry.entry_hash)">
+                                                <i class="fa-regular fa-copy"></i> Copy
+                                            </button>
+                                        </div>
+
+                                        <!-- 3. Evidence File SHA-256 (if present) -->
+                                        <template x-if="entry.document_hash">
+                                            <div>
+                                                <div style="border-top:1px dashed #CBD5E1; margin-bottom:0.5rem; margin-top:0.5rem;"></div>
+                                                <div style="display:flex; align-items:center; justify-content:space-between;">
+                                                    <div style="display:flex; align-items:center; gap:0.5rem; overflow:hidden;">
+                                                        <span style="color:var(--text-muted); font-weight:600; min-width:140px; white-space:nowrap;">Evidence File Hash:</span>
+                                                        <span class="mono" style="color:#059669; font-weight:600; text-overflow:ellipsis; overflow:hidden; white-space:nowrap;" x-text="shortHash(entry.document_hash)" :title="entry.document_hash"></span>
+                                                    </div>
+                                                    <button class="btn btn-sm btn-secondary" style="padding:0.15rem 0.5rem; font-size:0.75rem; white-space:nowrap;" @click="copyToClipboard(entry.document_hash)">
+                                                        <i class="fa-regular fa-copy"></i> Copy
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </template>
+
+                                        <!-- 4. Specific Version Download Control -->
+                                        <template x-if="entry.document_version_detail">
+                                            <div>
+                                                <div style="border-top:1px dashed #CBD5E1; margin-bottom:0.5rem; margin-top:0.5rem;"></div>
+                                                <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.5rem;">
+                                                    <div style="display:flex; align-items:center; gap:0.5rem; overflow:hidden;">
+                                                        <span style="color:var(--text-muted); font-weight:600; min-width:140px; white-space:nowrap;">Attached Version:</span>
+                                                        <span class="badge-status badge-verified" style="font-size:0.75rem; padding:0.15rem 0.45rem;" x-text="'v' + entry.document_version_detail.version_number + (entry.document_version_detail.is_redacted ? ' (Redacted)' : '')"></span>
+                                                        <span style="color:var(--text-main); font-weight:600; font-size:0.8rem; text-overflow:ellipsis; overflow:hidden; white-space:nowrap;" x-text="entry.document_version_detail.document_title"></span>
+                                                    </div>
+                                                    <button class="btn btn-sm btn-primary" style="padding:0.25rem 0.65rem; font-size:0.78rem; display:flex; align-items:center; gap:0.35rem;" @click="downloadVersion(entry.document_version_detail)">
+                                                        <i class="fa-solid fa-download"></i> Download Version <span x-text="'v' + entry.document_version_detail.version_number"></span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. ALERTS SOC TAB -->
+            <div x-show="activeTab === 'alerts'">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fa-solid fa-shield-cat" style="color:var(--warning);"></i> Security Operations Center (SOC) Alerts
+                        </div>
+                    </div>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Alert Type</th>
+                                <th>Severity</th>
+                                <th>User</th>
+                                <th>Description</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template x-for="alt in alerts" :key="alt.id">
+                                <tr>
+                                    <td style="font-weight:700; color:var(--warning);" x-text="alt.alert_type"></td>
+                                    <td>
+                                        <span class="badge-status" :class="alt.severity === 'HIGH' ? 'badge-tampered' : 'badge-warning'" x-text="alt.severity"></span>
+                                    </td>
+                                    <td x-text="alt.user_detail ? alt.user_detail.username : 'User'"></td>
+                                    <td x-text="alt.description"></td>
+                                    <td>
+                                        <span class="badge-status" :class="alt.status === 'OPEN' ? 'badge-warning' : (alt.status === 'ACKNOWLEDGED' ? 'badge-info' : 'badge-verified')" x-text="alt.status"></span>
+                                    </td>
+                                    <td>
+                                        <div style="display:flex; gap:0.4rem;">
+                                            <button class="btn btn-sm btn-secondary" @click="acknowledgeAlert(alt.id)" x-show="alt.status === 'OPEN'">Ack</button>
+                                            <button class="btn btn-sm btn-primary" @click="resolveAlert(alt.id)" x-show="alt.status !== 'RESOLVED'">Resolve</button>
+                                            <button class="btn btn-sm btn-secondary" @click="unresolveAlert(alt.id)" x-show="alt.status === 'RESOLVED' || alt.status === 'ACKNOWLEDGED'">
+                                                <i class="fa-solid fa-rotate-left"></i> Unresolve
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- CASE FILES & DETAILS MODAL WINDOW -->
+    <div class="modal-overlay" x-show="showCaseModal" style="display:none;" x-transition.opacity>
+        <div class="modal" style="max-width:1150px; width:95%; max-height:92vh; display:flex; flex-direction:column; padding:1.75rem 2.25rem; border-radius:16px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);">
+            <!-- Modal Header -->
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; padding-bottom:1.2rem; border-bottom:2px solid var(--border);">
+                <div style="display:flex; align-items:center; gap:1rem;">
+                    <button class="btn btn-secondary btn-sm" @click="showCaseModal = false" style="display:inline-flex; align-items:center; gap:0.4rem; padding:0.45rem 0.8rem; font-weight:700;">
+                        <i class="fa-solid fa-arrow-left"></i> Back
+                    </button>
+                    <div style="width:48px; height:48px; border-radius:12px; background:#DBEAFE; color:var(--primary); display:flex; align-items:center; justify-content:center; font-size:1.4rem;">
+                        <i class="fa-solid fa-folder-open"></i>
+                    </div>
+                    <div>
+                        <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.25rem;">
+                            <span class="mono" style="font-weight:900; font-size:1.25rem; background:#EFF6FF; border:1px solid #BFDBFE; color:var(--primary); padding:0.2rem 0.65rem; border-radius:8px;" x-text="caseModalObj ? caseModalObj.case_number : ''"></span>
+                            <span class="badge-status" :class="caseModalObj && caseModalObj.status === 'OPEN' ? 'badge-verified' : 'badge-tampered'" style="font-size:0.75rem; padding:0.2rem 0.6rem; border-radius:9999px;" x-text="caseModalObj ? caseModalObj.status : ''"></span>
+                        </div>
+                        <h2 style="font-weight:800; font-size:1.35rem; color:var(--text-main); margin:0;" x-text="caseModalObj ? caseModalObj.title : ''"></h2>
+                    </div>
+                </div>
+                
+                <div style="display:flex; align-items:center; gap:0.6rem;">
+                    <button class="btn btn-secondary" title="Open in Standalone Pop-up Window" @click="openStandaloneCaseWindow(caseModalObj)" style="display:flex; align-items:center; gap:0.5rem; padding:0.5rem 1rem; font-weight:700; font-size:0.875rem;">
+                        <i class="fa-solid fa-arrow-up-right-from-square" style="color:var(--primary);"></i> Pop Out Full Screen
+                    </button>
+                    <button @click="showCaseModal = false" class="btn btn-secondary" style="padding:0.5rem 0.85rem; color:var(--text-muted); cursor:pointer;">
+                        <i class="fa-solid fa-xmark" style="font-size:1.1rem;"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Case Meta Grid Dashboard -->
+            <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:12px; padding:1rem 1.25rem; margin-bottom:1.5rem; display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:1rem; align-items:center;">
+                <div style="display:flex; flex-direction:column; gap:0.2rem;">
+                    <span style="color:var(--text-muted); font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.03em;">Investigating Officer</span>
+                    <strong style="color:var(--text-main); font-size:0.95rem;" x-text="caseModalObj && caseModalObj.created_by_detail ? caseModalObj.created_by_detail.username : 'Police Officer'"></strong>
+                </div>
+
+                <div style="display:flex; flex-direction:column; gap:0.2rem;">
+                    <span style="color:var(--text-muted); font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.03em;">Security & Encryption</span>
+                    <span style="color:#059669; font-weight:700; font-size:0.9rem; display:inline-flex; align-items:center; gap:0.35rem;">
+                        <i class="fa-solid fa-shield-check"></i> AES-256 + Merkle Ledger
+                    </span>
+                </div>
+
+                <div style="display:flex; flex-direction:column; gap:0.2rem;">
+                    <span style="color:var(--text-muted); font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.03em;">Attached Evidence</span>
+                    <span class="mono" style="color:var(--primary); font-weight:800; font-size:1rem;" x-text="caseModalDocuments.length + ' Document File(s)'"></span>
+                </div>
+
+                <div style="display:flex; justify-content:flex-end; gap:0.6rem; flex-wrap:wrap;">
+                    <button class="btn btn-primary" @click="showUploadModal = true; uploadForm.case = caseModalObj.id;" x-show="currentUser && (currentUser.role === 'INVESTIGATING_OFFICER' || currentUser.role === 'ADMIN' || currentUser.is_superuser)">
+                        <i class="fa-solid fa-upload"></i> Upload Evidence File
+                    </button>
+                    <button class="btn btn-secondary" @click="showCaseModal = false; selectCase(caseModalObj);">
+                        <i class="fa-solid fa-shield-halved"></i> Audit Timeline
+                    </button>
+                </div>
+            </div>
+
+            <!-- Case Files Table Container -->
+            <div style="flex:1; display:flex; flex-direction:column; overflow:hidden; margin-bottom:1.25rem;">
+                <div style="font-weight:800; font-size:1.05rem; color:var(--text-main); margin-bottom:0.85rem; display:flex; align-items:center; justify-content:space-between;">
+                    <span style="display:flex; align-items:center; gap:0.5rem;">
+                        <i class="fa-solid fa-file-shield" style="color:var(--primary);"></i> Case Files & Evidence Repository
+                    </span>
+                    <span class="mono" style="font-size:0.85rem; color:var(--text-muted);" x-text="loadingModalDocs ? 'Loading files...' : caseModalDocuments.length + ' File(s) Listed'"></span>
+                </div>
+
+                <div style="flex:1; max-height:480px; overflow-y:auto; border:1px solid var(--border); border-radius:12px; background:white;">
+                    <table style="width:100%; font-size:0.9rem; border-collapse:collapse;">
+                        <thead>
+                            <tr style="position:sticky; top:0; background:#F1F5F9; color:#475569; z-index:2; border-bottom:2px solid #E2E8F0;">
+                                <th style="padding:0.85rem 1rem; width:28%;">Document Title</th>
+                                <th style="padding:0.85rem 1rem; width:14%;">Document Type</th>
+                                <th style="padding:0.85rem 1rem; width:10%;">Version</th>
+                                <th style="padding:0.85rem 1rem; width:22%;">SHA-256 Hash</th>
+                                <th style="padding:0.85rem 1rem; width:14%;">Uploaded By</th>
+                                <th style="padding:0.85rem 1rem; width:12%; text-align:right;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template x-for="doc in caseModalDocuments" :key="doc.id">
+                                <tr style="border-bottom:1px solid #F1F5F9; transition:background 0.15s ease;" onmouseenter="this.style.background='#F8FAFC'" onmouseleave="this.style.background='transparent'">
+                                    <td style="padding:0.85rem 1rem; font-weight:700; color:var(--text-main);">
+                                        <div style="display:flex; align-items:center; gap:0.6rem;">
+                                            <i class="fa-solid fa-file-lines" style="color:var(--primary); font-size:1.05rem;"></i>
+                                            <span x-text="doc.title"></span>
+                                        </div>
+                                    </td>
+                                    <td style="padding:0.85rem 1rem;">
+                                        <span class="badge-status badge-warning" style="font-size:0.75rem; padding:0.25rem 0.65rem; border-radius:6px; font-weight:700;" x-text="doc.doc_type"></span>
+                                    </td>
+                                    <td style="padding:0.85rem 1rem;" class="mono font-bold" x-text="'v' + (doc.current_version_detail ? doc.current_version_detail.version_number : 1)"></td>
+                                    <td style="padding:0.85rem 1rem;">
+                                        <span class="mono" style="color:var(--primary); font-weight:700; font-size:0.825rem; background:#EFF6FF; padding:0.25rem 0.55rem; border-radius:6px;" x-text="doc.current_version_detail ? doc.current_version_detail.sha256_hash.substring(0, 18) + '...' : 'N/A'" :title="doc.current_version_detail ? doc.current_version_detail.sha256_hash : ''"></span>
+                                    </td>
+                                    <td style="padding:0.85rem 1rem; color:var(--text-muted);" x-text="doc.created_by_detail ? doc.created_by_detail.username : 'User'"></td>
+                                    <td style="padding:0.85rem 1rem; text-align:right;">
+                                        <div style="display:inline-flex; gap:0.4rem; justify-content:flex-end;">
+                                            <button class="btn btn-sm btn-secondary" style="padding:0.35rem 0.75rem; font-size:0.8rem; display:inline-flex; align-items:center; gap:0.35rem;" @click="downloadDocument(doc.id, doc.title, doc.original_filename, doc.file_extension)">
+                                                <i class="fa-solid fa-download"></i> Decrypt
+                                            </button>
+                                            <button class="btn btn-sm btn-danger" style="padding:0.35rem 0.75rem; font-size:0.8rem;" @click="redactDocument(doc.id)" x-show="currentUser && (currentUser.role === 'ADMIN' || currentUser.is_superuser)">
+                                                Redact
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </template>
+                            <tr x-show="!loadingModalDocs && caseModalDocuments.length === 0">
+                                <td colspan="6" style="text-align:center; padding:3.5rem 1.5rem; color:var(--text-muted);">
+                                    <i class="fa-solid fa-folder-open" style="font-size:2.8rem; margin-bottom:1rem; display:block; opacity:0.35; color:var(--primary);"></i>
+                                    <div style="font-size:1rem; font-weight:600; margin-bottom:0.5rem; color:var(--text-main);">No evidence files uploaded yet for this case.</div>
+                                    <div style="font-size:0.85rem; margin-bottom:1.25rem;">Click 'Upload Evidence File' above to add documents to this case vault.</div>
+                                    <button class="btn btn-primary" @click="showUploadModal = true; uploadForm.case = caseModalObj.id;" x-show="currentUser && (currentUser.role === 'INVESTIGATING_OFFICER' || currentUser.role === 'ADMIN' || currentUser.is_superuser)">
+                                        <i class="fa-solid fa-upload"></i> Upload First Evidence File
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div style="display:flex; justify-content:space-between; align-items:center; padding-top:1rem; border-top:1px solid var(--border);">
+                <div style="display:flex; align-items:center; gap:0.5rem; color:var(--text-muted); font-size:0.85rem;">
+                    <i class="fa-solid fa-lock" style="color:#059669;"></i>
+                    <span>SHA-256 Immutable Audit Ledger Anchored</span>
+                </div>
+                <button class="btn btn-secondary" style="padding:0.5rem 1.25rem; font-weight:600;" @click="showCaseModal = false">Close Window</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- LOGIN MODAL -->
+    <div class="modal-overlay" x-show="showLoginModal">
+        <div class="modal">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+                <h3 style="font-weight:800; font-size:1.25rem;"><i class="fa-solid fa-lock" style="color:var(--primary);"></i> Authenticate Credentials</h3>
+                <button @click="showLoginModal = false" style="background:none; border:none; color:var(--text-muted); cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <div style="background:#EFF6FF; border:1px solid #BFDBFE; color:#1E40AF; padding:0.75rem 1rem; border-radius:10px; margin-bottom:1.2rem; font-size:0.875rem;">
+                Workspace: <strong x-text="targetRoleName"></strong>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Badge ID / Username</label>
+                <input type="text" class="form-input" x-model="loginForm.username">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Password</label>
+                <input type="password" class="form-input" x-model="loginForm.password">
+            </div>
+            <div style="display:flex; justify-content:flex-end; gap:0.6rem; margin-top:1.5rem;">
+                <button class="btn btn-secondary" @click="showLoginModal = false">Cancel</button>
+                <button class="btn btn-primary" @click="performLogin()">Sign In & Launch Workspace</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CREATE CASE MODAL -->
+    <div class="modal-overlay" x-show="showCreateCaseModal">
+        <div class="modal">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+                <h3 style="font-weight:800; font-size:1.25rem;"><i class="fa-solid fa-folder-plus" style="color:var(--primary);"></i> Register New Case</h3>
+                <button @click="showCreateCaseModal = false" style="background:none; border:none; color:var(--text-muted); cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Case Number (FIR / Year / Ref No)</label>
+                <input type="text" class="form-input" x-model="createCaseForm.case_number" placeholder="FIR/2026/00124">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Case Title</label>
+                <input type="text" class="form-input" x-model="createCaseForm.title" placeholder="Cyber Crime Forensic Investigation">
+            </div>
+            <div style="display:flex; justify-content:flex-end; gap:0.6rem; margin-top:1.5rem;">
+                <button class="btn btn-secondary" @click="showCreateCaseModal = false">Cancel</button>
+                <button class="btn btn-primary" @click="submitCreateCase()">Register Case</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- UPLOAD DOCUMENT MODAL -->
+    <div class="modal-overlay" x-show="showUploadModal">
+        <div class="modal">
+            <h3 style="font-weight:800; font-size:1.25rem; margin-bottom:1.2rem;"><i class="fa-solid fa-upload" style="color:var(--primary);"></i> Upload Evidence File</h3>
+            <div class="form-group">
+                <label class="form-label">Case Assignment</label>
+                <select class="form-select" x-model="uploadForm.case">
+                    <template x-for="c in cases" :key="c.id">
+                        <option :value="c.id" x-text="c.case_number + ' - ' + c.title"></option>
+                    </template>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Document Title</label>
+                <input type="text" class="form-input" x-model="uploadForm.title" placeholder="Forensic Disk Image Analysis">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Document Type</label>
+                <select class="form-select" x-model="uploadForm.doc_type">
+                    <option value="FIR">FIR</option>
+                    <option value="CHARGESHEET">Chargesheet</option>
+                    <option value="FORENSIC_REPORT">Forensic Report</option>
+                    <option value="WITNESS_STATEMENT">Witness Statement</option>
+                    <option value="EVIDENCE">Evidence</option>
+                    <option value="OTHER">Other</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Select File</label>
+                <input type="file" id="uploadFileInput" class="form-input">
+            </div>
+            <div style="display:flex; justify-content:flex-end; gap:0.6rem; margin-top:1.5rem;">
+                <button class="btn btn-secondary" @click="showUploadModal = false">Cancel</button>
+                <button class="btn btn-primary" @click="submitDocumentUpload()">Upload & Encrypt</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        Ministry of Home Affairs | Smart Automation Category | SecureDocs v2.0
+    </footer>
+
+    <script>
+        function securedocsApp() {
+            return {
+                activeTab: 'cases',
+                showRoleSelection: true,
+                targetRoleName: 'Investigating Officer',
+                roleTitle: 'Investigating Officer',
+                roleWelcomeMessage: 'Upload evidence files, write FIR reports, and manage assigned cases.',
+
+                isOnline: navigator.onLine,
+                pendingSyncCount: 0,
+                currentUser: null,
+                showLoginModal: false,
+                showCreateCaseModal: false,
+                showUploadModal: false,
+                showCaseModal: false,
+                caseModalObj: null,
+                caseModalDocuments: [],
+                loadingModalDocs: false,
+
+                cases: [],
+                documents: [],
+                alerts: [],
+                selectedCaseObj: null,
+                auditData: { timeline: [], verification: null },
+
+                caseSearchQuery: '',
+
+                get filteredCases() {
+                    if (!this.caseSearchQuery || !this.caseSearchQuery.trim()) {
+                        return this.cases;
+                    }
+                    const q = this.caseSearchQuery.toLowerCase().trim();
+                    return this.cases.filter(c => 
+                        (c.case_number && c.case_number.toLowerCase().includes(q)) ||
+                        (c.title && c.title.toLowerCase().includes(q)) ||
+                        (c.created_by_detail && c.created_by_detail.username.toLowerCase().includes(q))
+                    );
+                },
+
+                loginForm: { username: 'test_admin', password: 'AdminPassword123!' },
+                uploadForm: { case: '', title: '', doc_type: 'FIR' },
+                createCaseForm: { case_number: '', title: '' },
+
+                initApp() {
+                    window.addEventListener('online', () => this.isOnline = true);
+                    window.addEventListener('offline', () => this.isOnline = false);
+                },
+
+                handleGlobalBack() {
+                    if (this.showCaseModal) {
+                        this.showCaseModal = false;
+                        return;
+                    }
+                    if (this.showUploadModal) {
+                        this.showUploadModal = false;
+                        return;
+                    }
+                    if (this.showCreateCaseModal) {
+                        this.showCreateCaseModal = false;
+                        return;
+                    }
+                    if (this.showLoginModal) {
+                        this.showLoginModal = false;
+                        return;
+                    }
+                    if (this.activeTab === 'audit') {
+                        this.activeTab = 'cases';
+                        return;
+                    }
+                    if (this.activeTab === 'alerts' && this.currentUser && (this.currentUser.role === 'ADMIN' || this.currentUser.is_superuser)) {
+                        this.activeTab = 'cases';
+                        return;
+                    }
+                    if (!this.showRoleSelection) {
+                        this.showRoleSelection = true;
+                        return;
+                    }
+                    if (window.history.length > 1) {
+                        window.history.back();
+                    }
+                },
+
+                selectRoleLogin(username, password, badgeId, role, roleName) {
+                    this.loginForm.username = username;
+                    this.loginForm.password = password;
+                    this.targetRoleName = roleName;
+                    this.showLoginModal = true;
+                },
+
+                async performLogin() {
+                    const res = await fetch('/api/auth/login/', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(this.loginForm)
+                    });
+                    if (res.ok) {
+                        const data = await res.json();
+                        localStorage.setItem('access_token', data.access);
+                        this.showLoginModal = false;
+                        this.showRoleSelection = false;
+                        await this.fetchCurrentUser();
+                        await this.loadCases();
+                        await this.loadDocuments();
+
+                        // Configure Workspace per Role
+                        if (this.currentUser.role === 'INVESTIGATING_OFFICER') {
+                            this.roleTitle = 'Investigating Officer';
+                            this.roleWelcomeMessage = 'Upload FIRs, attach forensic evidence, and manage active police cases.';
+                            this.activeTab = 'cases';
+                        } else if (this.currentUser.role === 'LEGAL_REVIEWER') {
+                            this.roleTitle = 'Court Judge / Legal Reviewer';
+                            this.roleWelcomeMessage = 'Inspect Merkle chain integrity, review case audit timelines, and export court-ready PDF reports.';
+                            this.activeTab = 'cases';
+                        } else {
+                            this.roleTitle = 'SOC Security Analyst (Admin)';
+                            this.roleWelcomeMessage = 'Monitor real-time anomaly detection alerts, unlock accounts, and manage global system security.';
+                            this.activeTab = 'alerts';
+                            await this.loadAlerts();
+                        }
+                    } else {
+                        alert("Invalid Credentials or Account Locked.");
+                    }
+                },
+
+                async fetchCurrentUser() {
+                    const token = localStorage.getItem('access_token');
+                    if (!token) return;
+                    const res = await fetch('/api/accounts/me/', {
+                        headers: { 'Authorization': 'Bearer ' + token }
+                    });
+                    if (res.ok) {
+                        this.currentUser = await res.json();
+                    }
+                },
+
+                async loadCases() {
+                    const token = localStorage.getItem('access_token');
+                    const res = await fetch('/api/cases/', {
+                        headers: { 'Authorization': 'Bearer ' + token }
+                    });
+                    if (res.ok) {
+                        this.cases = await res.json();
+                        if (this.cases.length > 0) {
+                            this.selectedCaseObj = this.cases[0];
+                            this.uploadForm.case = this.cases[0].id;
+                        }
+                    }
+                },
+
+                async openCaseModal(c) {
+                    if (!c) return;
+                    this.selectedCaseObj = c;
+                    this.caseModalObj = c;
+                    this.uploadForm.case = c.id;
+                    this.showCaseModal = true;
+                    this.loadingModalDocs = true;
+                    this.caseModalDocuments = [];
+
+                    const token = localStorage.getItem('access_token');
+                    try {
+                        const res = await fetch('/api/documents/?case=' + c.id, {
+                            headers: { 'Authorization': 'Bearer ' + token }
+                        });
+                        if (res.ok) {
+                            this.caseModalDocuments = await res.json();
+                            this.documents = this.caseModalDocuments;
+                        }
+                    } catch(e) {
+                        console.error("Failed to fetch documents for case modal", e);
+                    } finally {
+                        this.loadingModalDocs = false;
+                    }
+                },
+
+                openStandaloneCaseWindow(c) {
+                    const caseObj = c || this.caseModalObj || this.selectedCaseObj;
+                    if (!caseObj) return;
+
+                    const docs = this.caseModalDocuments || [];
+                    const popup = window.open('', '_blank', 'width=1200,height=850,scrollbars=yes,resizable=yes');
+                    if (!popup) {
+                        alert("Pop-up window was blocked by your browser. Please allow popups for this site.");
+                        return;
+                    }
+
+                    let docsRows = '';
+                    if (docs.length === 0) {
+                        docsRows = `
+                            <tr>
+                                <td colspan="5" style="text-align:center; padding:30px; color:#64748B;">
+                                    <i class="fa-solid fa-folder-open" style="font-size:2rem; margin-bottom:8px; display:block; color:#2563EB;"></i>
+                                    No documents uploaded yet for this case.
+                                </td>
+                            </tr>
+                        `;
+                    } else {
+                        docs.forEach(doc => {
+                            const ver = doc.current_version_detail ? doc.current_version_detail.version_number : 1;
+                            const hash = doc.current_version_detail ? doc.current_version_detail.sha256_hash.substring(0, 18) + '...' : 'N/A';
+                            const user = doc.created_by_detail ? doc.created_by_detail.username : 'User';
+                            docsRows += `
+                                <tr>
+                                    <td style="font-weight:600; padding:12px; border-bottom:1px solid #E2E8F0;">${doc.title}</td>
+                                    <td style="padding:12px; border-bottom:1px solid #E2E8F0;"><span style="background:#FEF3C7; color:#D97706; font-size:0.75rem; font-weight:700; padding:2px 8px; border-radius:6px;">${doc.doc_type}</span></td>
+                                    <td style="font-family:monospace; padding:12px; border-bottom:1px solid #E2E8F0;">v${ver}</td>
+                                    <td style="font-family:monospace; color:#2563EB; padding:12px; border-bottom:1px solid #E2E8F0;">${hash}</td>
+                                    <td style="padding:12px; border-bottom:1px solid #E2E8F0;">${user}</td>
+                                </tr>
+                            `;
+                        });
+                    }
+
+                    popup.document.write(`
+                        <!DOCTYPE html>
+                        <html>
+                        <head>
+                            <title>Case Files — ${caseObj.case_number}</title>
+                            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+                            <style>
+                                body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #F8FAFC; color: #0F172A; margin: 0; padding: 24px; }
+                                .card { background: white; border-radius: 12px; border: 1px solid #E2E8F0; padding: 24px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+                                .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #F1F5F9; padding-bottom: 16px; margin-bottom: 20px; }
+                                .badge { padding: 4px 10px; border-radius: 20px; font-weight: 700; font-size: 0.75rem; }
+                                .badge-open { background: #DCFCE7; color: #166534; }
+                                .badge-closed { background: #FEE2E2; color: #991B1B; }
+                                table { width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 0.9rem; }
+                                th { background: #F8FAFC; text-align: left; padding: 10px 12px; font-size: 0.75rem; text-transform: uppercase; color: #64748B; border-bottom: 2px solid #E2E8F0; }
+                                .btn { background: #2563EB; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.85rem; }
+                                .btn:hover { background: #1D4ED8; }
+                            </style>
+                        </head>
+                        <body>
+                            <div class="card">
+                                <div class="header">
+                                    <div>
+                                        <span style="font-family:monospace; font-weight:800; color:#2563EB; font-size:1.2rem;">${caseObj.case_number}</span>
+                                        <span class="badge ${caseObj.status === 'OPEN' ? 'badge-open' : 'badge-closed'}" style="margin-left:8px;">${caseObj.status}</span>
+                                        <h2 style="margin:6px 0 0 0; font-size:1.25rem; color:#0F172A;">${caseObj.title}</h2>
+                                    </div>
+                                    <button class="btn" onclick="window.print()"><i class="fa-solid fa-print"></i> Print Case Dossier</button>
+                                </div>
+                                <h3 style="font-size:1rem; margin-top:20px; color:#334155;"><i class="fa-solid fa-file-shield" style="color:#2563EB;"></i> Documents Related to this Case</h3>
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Document Title</th>
+                                            <th>Type</th>
+                                            <th>Version</th>
+                                            <th>SHA-256 Hash</th>
+                                            <th>Uploaded By</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${docsRows}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </body>
+                        </html>
+                    `);
+                    popup.document.close();
+                },
+
+                async selectVaultCase(c) {
+                    await this.openCaseModal(c);
+                },
+
+                async loadDocuments() {
+                    const token = localStorage.getItem('access_token');
+                    if (!this.selectedCaseObj) return;
+                    const res = await fetch('/api/documents/?case=' + this.selectedCaseObj.id, {
+                        headers: { 'Authorization': 'Bearer ' + token }
+                    });
+                    if (res.ok) {
+                        this.documents = await res.json();
+                    }
+                },
+
+                async loadAuditTimeline() {
+                    const token = localStorage.getItem('access_token');
+                    if (!this.selectedCaseObj) return;
+                    const res = await fetch('/api/cases/' + this.selectedCaseObj.id + '/audit-timeline/', {
+                        headers: { 'Authorization': 'Bearer ' + token }
+                    });
+                    if (res.ok) {
+                        this.auditData = await res.json();
+                    }
+                },
+
+                async loadAlerts() {
+                    const token = localStorage.getItem('access_token');
+                    const res = await fetch('/api/alerts/', {
+                        headers: { 'Authorization': 'Bearer ' + token }
+                    });
+                    if (res.ok) {
+                        this.alerts = await res.json();
+                    }
+                },
+
+                async acknowledgeAlert(alertId) {
+                    const token = localStorage.getItem('access_token');
+                    const res = await fetch('/api/alerts/' + alertId + '/acknowledge/', {
+                        method: 'POST',
+                        headers: { 'Authorization': 'Bearer ' + token }
+                    });
+                    if (res.ok) {
+                        await this.loadAlerts();
+                    } else {
+                        alert("Failed to acknowledge alert.");
+                    }
+                },
+
+                async resolveAlert(alertId) {
+                    const token = localStorage.getItem('access_token');
+                    const res = await fetch('/api/alerts/' + alertId + '/resolve/', {
+                        method: 'POST',
+                        headers: { 'Authorization': 'Bearer ' + token }
+                    });
+                    if (res.ok) {
+                        await this.loadAlerts();
+                    } else {
+                        alert("Failed to resolve alert.");
+                    }
+                },
+
+                async unresolveAlert(alertId) {
+                    const token = localStorage.getItem('access_token');
+                    const res = await fetch('/api/alerts/' + alertId + '/unresolve/', {
+                        method: 'POST',
+                        headers: { 'Authorization': 'Bearer ' + token }
+                    });
+                    if (res.ok) {
+                        await this.loadAlerts();
+                    } else {
+                        alert("Failed to unresolve alert.");
+                    }
+                },
+
+                selectCase(c) {
+                    this.selectedCaseObj = c;
+                    this.uploadForm.case = c.id;
+                    this.loadDocuments();
+                    this.loadAuditTimeline();
+                    this.activeTab = 'audit';
+                },
+
+                async closeCase(caseId) {
+                    if (!confirm("Are you sure you want to close this case? Closed cases will be archived and hidden from Police Officers and Forensic staff.")) {
+                        return;
+                    }
+                    const token = localStorage.getItem('access_token');
+                    const res = await fetch('/api/cases/' + caseId + '/close/', {
+                        method: 'POST',
+                        headers: { 'Authorization': 'Bearer ' + token }
+                    });
+                    if (res.ok) {
+                        await this.loadCases();
+                        await this.loadDocuments();
+                        alert("Case closed successfully and hidden from Police/Forensics.");
+                    } else {
+                        alert("Failed to close case.");
+                    }
+                },
+
+                async reopenCase(caseId) {
+                    const token = localStorage.getItem('access_token');
+                    const res = await fetch('/api/cases/' + caseId + '/reopen/', {
+                        method: 'POST',
+                        headers: { 'Authorization': 'Bearer ' + token }
+                    });
+                    if (res.ok) {
+                        await this.loadCases();
+                        await this.loadDocuments();
+                        alert("Case reopened successfully.");
+                    } else {
+                        alert("Failed to reopen case.");
+                    }
+                },
+
+                async downloadDocument(docId, docTitle, origFilename, fileExt) {
+                    const token = localStorage.getItem('access_token');
+                    try {
+                        const res = await fetch('/api/documents/' + docId + '/download/?token=' + token, {
+                            headers: { 'Authorization': 'Bearer ' + token }
+                        });
+                        if (res.ok) {
+                            const blob = await res.blob();
+                            let fileName = origFilename;
+                            
+                            if (!fileName) {
+                                const disposition = res.headers.get('Content-Disposition');
+                                if (disposition && disposition.includes('filename=')) {
+                                    const matches = /filename="?([^";]+)"?/.exec(disposition);
+                                    if (matches && matches[1]) {
+                                        fileName = matches[1];
+                                    }
+                                }
+                            }
+
+                            if (!fileName) {
+                                if (fileExt) {
+                                    const cleanExt = fileExt.startsWith('.') ? fileExt : ('.' + fileExt);
+                                    fileName = (docTitle || 'Decrypted_Document').replace(/\s+/g, '_') + cleanExt;
+                                } else {
+                                    fileName = (docTitle || 'Decrypted_Document').replace(/\s+/g, '_') + '.bin';
+                                }
+                            }
+
+                            const url = window.URL.createObjectURL(blob);
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.download = fileName;
+                            document.body.appendChild(a);
+                            a.click();
+                            a.remove();
+                            window.URL.revokeObjectURL(url);
+                        } else {
+                            alert("Decryption / Download failed or Access Denied.");
+                        }
+                    } catch(e) {
+                        alert("Error downloading decrypted document: " + e.message);
+                    }
+                },
+
+                async downloadVersion(verDetail) {
+                    if (!verDetail || !verDetail.document_id || !verDetail.id) return;
+                    const token = localStorage.getItem('access_token');
+                    try {
+                        const res = await fetch(`/api/documents/${verDetail.document_id}/download/?version_id=${verDetail.id}&token=${token}`, {
+                            headers: { 'Authorization': 'Bearer ' + token }
+                        });
+                        if (res.ok) {
+                            const blob = await res.blob();
+                            let fileName = verDetail.original_filename;
+                            if (!fileName) {
+                                if (verDetail.file_extension) {
+                                    const cleanExt = verDetail.file_extension.startsWith('.') ? verDetail.file_extension : ('.' + verDetail.file_extension);
+                                    fileName = (verDetail.document_title || 'Document').replace(/\s+/g, '_') + `_v${verDetail.version_number}` + cleanExt;
+                                } else {
+                                    fileName = (verDetail.document_title || 'Document').replace(/\s+/g, '_') + `_v${verDetail.version_number}.bin`;
+                                }
+                            }
+                            const url = window.URL.createObjectURL(blob);
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.download = fileName;
+                            document.body.appendChild(a);
+                            a.click();
+                            a.remove();
+                            window.URL.revokeObjectURL(url);
+                        } else {
+                            alert("Version download failed or Access Denied.");
+                        }
+                    } catch(e) {
+                        alert("Error downloading version: " + e.message);
+                    }
+                },
+
+                async redactDocument(docId) {
+                    const token = localStorage.getItem('access_token');
+                    const res = await fetch('/api/documents/' + docId + '/redact/', {
+                        method: 'POST',
+                        headers: { 'Authorization': 'Bearer ' + token }
+                    });
+                    if (res.ok) {
+                        alert("Redacted document version created successfully.");
+                        await this.loadDocuments();
+                        if (this.caseModalObj) {
+                            await this.openCaseModal(this.caseModalObj);
+                        }
+                    }
+                },
+
+                async exportPdfReport() {
+                    const token = localStorage.getItem('access_token');
+                    if (!this.selectedCaseObj) return;
+                    try {
+                        const res = await fetch('/api/cases/' + this.selectedCaseObj.id + '/audit-report.pdf/', {
+                            headers: { 'Authorization': 'Bearer ' + token }
+                        });
+                        if (res.ok) {
+                            const blob = await res.blob();
+                            const url = window.URL.createObjectURL(blob);
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.download = `AuditReport_${this.selectedCaseObj.case_number.replace(/\//g, '_')}.pdf`;
+                            document.body.appendChild(a);
+                            a.click();
+                            a.remove();
+                            window.URL.revokeObjectURL(url);
+                        }
+                    } catch(e) {
+                        alert("Error exporting PDF: " + e.message);
+                    }
+                },
+
+                async submitDocumentUpload() {
+                    const token = localStorage.getItem('access_token');
+                    const fileInput = document.getElementById('uploadFileInput');
+                    if (!fileInput.files[0]) {
+                        alert("Please select a file.");
+                        return;
+                    }
+                    const formData = new FormData();
+                    formData.append('case', this.uploadForm.case);
+                    formData.append('title', this.uploadForm.title);
+                    formData.append('doc_type', this.uploadForm.doc_type);
+                    formData.append('file', fileInput.files[0]);
+
+                    const res = await fetch('/api/documents/', {
+                        method: 'POST',
+                        headers: { 'Authorization': 'Bearer ' + token },
+                        body: formData
+                    });
+                    if (res.ok) {
+                        this.showUploadModal = false;
+                        await this.loadDocuments();
+                        await this.loadCases();
+                        if (this.caseModalObj && this.caseModalObj.id === this.uploadForm.case) {
+                            await this.openCaseModal(this.caseModalObj);
+                        }
+                        alert("Document uploaded and encrypted cleanly.");
+                    }
+                },
+
+                async submitCreateCase() {
+                    const token = localStorage.getItem('access_token');
+                    if (!this.createCaseForm.case_number || !this.createCaseForm.title) {
+                        alert("Case Number and Case Title are required.");
+                        return;
+                    }
+                    const res = await fetch('/api/cases/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer ' + token
+                        },
+                        body: JSON.stringify(this.createCaseForm)
+                    });
+                    if (res.ok) {
+                        this.showCreateCaseModal = false;
+                        this.createCaseForm = { case_number: '', title: '' };
+                        await this.loadCases();
+                        alert("New case registered successfully!");
+                    } else {
+                        const data = await res.json().catch(() => ({}));
+                        alert("Failed to create case: " + (data.detail || JSON.stringify(data)));
+                    }
+                },
+
+                async simulateTamperPrompt() {
+                    const token = localStorage.getItem('access_token');
+                    if (!this.documents || this.documents.length === 0) {
+                        alert("Please upload or load documents first.");
+                        return;
+                    }
+                    const versionId = this.documents[0].current_version_detail.id;
+                    const res = await fetch('/api/documents/' + versionId + '/simulate-tamper/', {
+                        method: 'POST',
+                        headers: { 'Authorization': 'Bearer ' + token }
+                    });
+                    if (res.ok) {
+                        alert("TAMPER SIMULATED: File hash corrupted on disk without ledger entry. Re-checking audit timeline now!");
+                        await this.loadAuditTimeline();
+                        this.activeTab = 'audit';
+                    }
+                },
+
+                async restoreTamperPrompt() {
+                    const token = localStorage.getItem('access_token');
+                    if (!this.documents || this.documents.length === 0) {
+                        alert("Please upload or load documents first.");
+                        return;
+                    }
+                    const versionId = this.documents[0].current_version_detail.id;
+                    const res = await fetch('/api/documents/' + versionId + '/restore-tamper/', {
+                        method: 'POST',
+                        headers: { 'Authorization': 'Bearer ' + token }
+                    });
+                    if (res.ok) {
+                        alert("AUDIT CHAIN RESTORED: Document version hash restored to valid SHA-256. Audit chain is now INTACT ✅!");
+                        await this.loadAuditTimeline();
+                        this.activeTab = 'audit';
+                    }
+                },
+
+                formatTimestamp(ts) {
+                    if (!ts) return '';
+                    try {
+                        const d = new Date(ts);
+                        if (isNaN(d.getTime())) return ts.split('.')[0].replace('T', ' ');
+                        return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) + ' · ' + d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                    } catch(e) {
+                        return ts;
+                    }
+                },
+
+                shortHash(hash) {
+                    if (!hash) return '';
+                    if (hash.length > 28) {
+                        return hash.substring(0, 14) + '...' + hash.substring(hash.length - 10);
+                    }
+                    return hash;
+                },
+
+                copyToClipboard(text) {
+                    if (navigator.clipboard) {
+                        navigator.clipboard.writeText(text);
+                    }
+                    alert("Entry Hash copied to clipboard:\n" + text);
+                },
+
+                getActionBadgeClass(action) {
+                    if (action === 'UPLOAD') return 'badge-verified';
+                    if (action === 'DOWNLOAD') return 'badge-info';
+                    if (action === 'REDACT') return 'badge-warning';
+                    return 'badge-secondary';
+                },
+
+                getTimelineIconClass(action) {
+                    if (action === 'UPLOAD') return 'icon-upload';
+                    if (action === 'DOWNLOAD') return 'icon-download';
+                    if (action === 'REDACT') return 'icon-redact';
+                    return 'icon-default';
+                },
+
+                getActionIcon(action) {
+                    if (action === 'UPLOAD') return 'fa-upload';
+                    if (action === 'DOWNLOAD') return 'fa-download';
+                    if (action === 'REDACT') return 'fa-user-shield';
+                    return 'fa-shield';
+                },
+
+                logout() {
+                    localStorage.removeItem('access_token');
+                    this.currentUser = null;
+                    this.showRoleSelection = true;
+                }
+            }
+        }
+    </script>
+</body>
+</html>
