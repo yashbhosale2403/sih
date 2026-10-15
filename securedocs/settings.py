@@ -4,11 +4,19 @@ from datetime import timedelta
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-sih26190-securedocs-secret-key-dev')
+SECRET_KEY = os.getenv('SECRET_KEY')
+DEBUG = os.getenv('DEBUG', 'False').strip().lower() in {'1', 'true', 'yes'}
+if not SECRET_KEY:
+    if DEBUG:
+        SECRET_KEY = 'local-development-only-change-me'
+    else:
+        raise RuntimeError('SECRET_KEY must be set when DEBUG is disabled')
 
-DEBUG = os.getenv('DEBUG', 'True') == 'True'
-
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
+ALLOWED_HOSTS = [
+    host.strip() for host in os.getenv(
+        'ALLOWED_HOSTS', 'localhost,127.0.0.1'
+    ).split(',') if host.strip()
+]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -34,6 +42,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -94,7 +103,6 @@ AUTH_PASSWORD_VALIDATORS = [
 # REST Framework Configuration with QueryStringJWTAuthentication support
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'securedocs.authentication.QueryStringJWTAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     ),
@@ -117,7 +125,7 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = 'static/'
-STATICFILES_DIRS = [BASE_DIR / 'STATIC']
+STATICFILES_DIRS = [BASE_DIR / 'STATIC'] if (BASE_DIR / 'STATIC').exists() else []
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 MEDIA_URL = 'media/'
@@ -126,7 +134,12 @@ MEDIA_ROOT = BASE_DIR / 'media'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Master Key for Fernet Document Encryption (Stable deterministic key for dev restarts)
-MASTER_KEY = os.getenv('MASTER_KEY', '4Vz7VpW3W8qL+mK7vQ8E9dF0G1H2I3J4K5L6M7N8O9P=')
+MASTER_KEY = os.getenv('MASTER_KEY')
+if not MASTER_KEY:
+    if DEBUG:
+        MASTER_KEY = 'local-development-only-change-me'
+    else:
+        raise RuntimeError('MASTER_KEY must be set when DEBUG is disabled')
 
 # Anomaly Detection Settings
 ANOMALY_SCAN_INTERVAL_SECONDS = int(os.getenv('ANOMALY_SCAN_INTERVAL_SECONDS', 120))
