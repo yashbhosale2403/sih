@@ -179,3 +179,12 @@ CELERY_BEAT_SCHEDULE = {
         'schedule': ANOMALY_SCAN_INTERVAL_SECONDS,
     },
 }
+
+CELERY_TASK_ALWAYS_EAGER = os.getenv('CELERY_TASK_ALWAYS_EAGER', 'True').strip().lower() in {'1', 'true', 'yes'}
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_SSL_REDIRECT = os.getenv('SECURE_SSL_REDIRECT', 'True').strip().lower() in {'1', 'true', 'yes'}
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SECURE = not DEBUG
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = 'DENY'
